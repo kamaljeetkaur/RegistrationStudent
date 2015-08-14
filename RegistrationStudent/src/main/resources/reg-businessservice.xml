@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+<beans>
+	<bean id="studentBusinessService" class="com.rd.businessservice.StudentBusinessServiceImpl">
+		<property name="studentDao" ref="studentDao" />
+	</bean>
+	
+	<bean id="loginBusinessService" class="com.rd.businessservice.LoginBusinessServiceImpl">
+		<property name="studentDao" ref="studentDao" />
+	</bean>
+	
+	<bean id="departmentBusinessService" class="com.rd.businessservice.DepartmentBusinessServiceImpl">
+		<property name="departmentDao" ref="departmentDao" />
+		<property name="studentBusinessService" ref="studentBusinessService" />
+	</bean>
+	
+	
+</beans>

@@ -1,0 +1,72 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+	<bean id="viewResolver"
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix">
+			<value>/WEB-INF/jsp/</value>
+		</property>
+		<property name="suffix">
+			<value>.jsp</value>
+		</property>
+	</bean>
+
+	<bean id="urlMapping"
+		class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+		<property name="mappings">
+			<props>
+				<prop key="/login.html">loginController</prop>
+				<prop key="/department.html">departmentController</prop>
+				<prop key="/student.html">studentController</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean id="methodNameResolver"
+		class="org.springframework.web.servlet.mvc.multiaction.ParameterMethodNameResolver">
+		<property name="paramName">
+			<value>method</value>
+		</property>
+	</bean>
+
+	<bean id="departmentController" class="com.rd.controller.DepartmentController">
+		<property name="methodNameResolver">
+			<ref bean="methodNameResolver"></ref>
+		</property>
+		
+		<property name="departmentBusinessService" ref="departmentBusinessService"/>
+			<property name="studentBusinessService" ref="studentBusinessService"/>
+
+	</bean>
+	
+	<bean id="studentController" class="com.rd.controller.StudentController">
+		<property name="methodNameResolver">
+			<ref bean="methodNameResolver"></ref>
+		</property>
+		
+		<property name="studentValidator" ref="studentValidator"/>
+		<property name="studentBusinessService" ref="studentBusinessService"/>
+		<property name="departmentBusinessService" ref="departmentBusinessService"/>
+
+	</bean>
+	
+	<bean id="loginController" class="com.rd.controller.LoginController">
+		<property name="methodNameResolver">
+			<ref bean="methodNameResolver"></ref>
+		</property>
+		
+		<property name="studentValidator" ref="studentValidator"/>
+		<property name="studentBusinessService" ref="studentBusinessService"/>
+		<property name="loginBusinessService" ref="loginBusinessService"/>
+		<property name="departmentBusinessService" ref="departmentBusinessService"/>
+
+	</bean>
+	
+	<bean id="studentValidator" class="com.rd.validator.StudentValidator">
+	
+	</bean>
+	
+	
+</beans>

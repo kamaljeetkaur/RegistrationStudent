@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+        http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd 
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+	<import resource="classpath:reg-businessservice.xml" />
+	<import resource="classpath:reg-dataservice.xml" />
+	<bean id="propertyHolder"
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+				<value>classpath:dbvalues.properties</value>
+				<value>classpath:hibernate.properties</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="amsDataSource"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource"
+		p:driverClassName="${hibernate.connection.driver_class}" p:url="jdbc:mysql://${host}:3306/${dbname}"
+		p:username="${username}" p:password="${password}" />
+
+	<bean id="sessionFactory"
+		class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+		<property name="dataSource" ref="amsDataSource" />
+		<property name="configLocation">
+			<value>classpath:hibernate.cfg.xml</value>
+		</property>
+	</bean>
+
+	<bean id="hibernateTemplate" class="org.springframework.orm.hibernate3.HibernateTemplate">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+	
+	<bean id="transactionManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean> 
+    
+     <bean id="transactionInterceptor"
+		 class="org.springframework.transaction.interceptor.TransactionInterceptor">
+    	<property name="transactionManager" ref="transactionManager"/>
+	    <property name="transactionAttributes">
+    		<props>
+	  	      <prop key="*">PROPAGATION_REQUIRED,-Exception</prop>
+	        </props>
+	    </property>
+	</bean>
+	
+	<bean name="proxyTrn" class="org.springframework.aop.framework.autoproxy.BeanNameAutoProxyCreator">
+    	<property name="beanNames">
+    		<list>
+    			<value>stuentBusinessService</value>
+    			<value>loginBusinessService</value>
+    			<value>departmentBusinessService</value>
+    		</list>
+    	</property>
+	    <property name="interceptorNames">
+            <list>
+                <value>transactionInterceptor</value>
+            </list>
+        </property>
+    </bean>
+   
+	
+
+</beans>

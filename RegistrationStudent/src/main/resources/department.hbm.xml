@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+"-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="com.rd.entity">
+	<class name="Department" table="department">
+		<id name="id" type="java.lang.Integer">
+			<column name="dept_id" />
+			<generator class="native" />
+		</id>
+
+		<property name="name" type="java.lang.String">
+			<column name="dept_name" length="100" not-null="true" />
+		</property>
+
+		<set name="studentSet" table="student" inverse="true" cascade="save-update">
+			<key> <column name="dept_id" not-null="false" /></key>
+			<one-to-many class="Student" />
+		</set>
+	</class>
+</hibernate-mapping>
