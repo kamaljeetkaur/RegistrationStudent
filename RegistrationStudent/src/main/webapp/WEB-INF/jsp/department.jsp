@@ -4,7 +4,29 @@
 <html>
 <head>
 <h2>Create department</h2>
+<script type="text/javascript" src="js/jquery-2.1.4.js"></script>
 <script type="text/javascript">
+function deptNameExists() {
+	 $.ajax({
+		type:"post",
+		url:"department.html?method=deptNameExists",
+		cache:false,
+		data:'name=' + $("#name").val(),
+		success:function(response){
+			if(response == "Department already exists.") {
+				$("#deptNameExistMessage").text(response);
+				$("#deptCreate").prop('disabled',true);
+			} else {
+				$("#deptNameExistMessage").text(response);
+				$("#deptCreate").prop('disabled',false);
+			}
+		},
+	    error:function(){      
+		   alert('Error while request..');
+	    }
+	}); 
+}
+
 	function logExit() {
 		document.deptForm.action = "department.html?method=logOut";
 		document.deptForm.submit();
@@ -28,7 +50,6 @@
 		window.location.href = "department.html?method=deleteDepartment&id="+id;
 	}
 	
-	
 </script>
 </head>
 
@@ -37,17 +58,18 @@
 		<table>
 			<tr>
 				<td><label>Department Name</label></td>
-				<td><form:input path="name" /></td>
-				<td><form:hidden path="id"/></td>
+				<td><form:input path="name" onblur="deptNameExists();" /></td>
+				<td><form:hidden path="id" /></td>
+				<td><label id="deptNameExistMessage" /></td>
 			</tr>
-			
+
 			<c:if test="${(departmentVo.create == true)}">
 				<tr>
 					<td><input id="deptCreate" type="button" name="deptCreate"
-						value="Create Department" onclick="createDepartment();" /></td>
+						value="Create Department" onclick="createDepartment();"/></td>
 				</tr>
 			</c:if>
-			
+
 			<c:if test="${(departmentVo.create == false)}">
 				<tr>
 					<td><input id="deptUpdate" type="button" name="deptUpdate"

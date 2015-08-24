@@ -6,8 +6,8 @@ import com.rd.dataservice.StudentDao;
 import com.rd.entity.Department;
 import com.rd.entity.Student;
 
-public class StudentBusinessServiceImpl implements StudentBusinessService{
-	
+public class StudentBusinessServiceImpl implements StudentBusinessService {
+
 	private StudentDao studentDao;
 
 	public void saveStudent(Student student) {
@@ -33,22 +33,27 @@ public class StudentBusinessServiceImpl implements StudentBusinessService{
 	public void deleteStudent(Student student) {
 		studentDao.deleteStudent(student);
 	}
-	
-	public Student fetchStudentWithId(Integer id){
+
+	public Student fetchStudentWithId(Integer id) {
 		return studentDao.fetchStudentWithId(id);
 	}
-	
+
 	public List<Student> getUpdatedListAfterDeletion(Integer id) {
 		Student student = studentDao.fetchStudentWithId(id);
-		student.getDepartment().getId();
 		studentDao.deleteStudent(student);
 		return studentDao.fetchAllStudents();
 	}
-	
+
 	public void updateDepartmentInStudent(Integer id) {
-	studentDao.updateDepartmentInStudent(id); 
+		studentDao.updateDepartmentInStudent(id);
 	}
 
+	public Boolean userNameExists(String userName) {
+		return studentDao.userNameExists(userName);
+	}
 
+	public Boolean rollNumberExists(Integer rollNumber) {
+		return studentDao.rollNumberExists(rollNumber);
+	}
 
 }

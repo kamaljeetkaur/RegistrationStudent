@@ -59,11 +59,8 @@ public class DepartmentBusinessServiceImpl implements DepartmentBusinessService 
 		this.studentBusinessService = studentBusinessService;
 	}
 
-	public List<Student> getUpdatedListAfterDeletion(Integer id) {
-		// TODO Auto-generated method stub
-		return null;
+	public boolean deptNameExists(String deptName) {
+		return departmentDao.deptNameExists(deptName);
 	}
-	
-	
 	
 }

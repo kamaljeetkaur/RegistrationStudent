@@ -1,5 +1,7 @@
 package com.rd.controller;
 
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -21,24 +23,13 @@ import com.rd.vo.StudentVo;
 
 public class StudentController extends MultiActionController {
 
-	private Validator studentValidator;
-	private BindingResult errors;
 	private StudentBusinessService studentBusinessService;
 	private DepartmentBusinessService departmentBusinessService;
 
-	
 	public ModelAndView doSignUp(HttpServletRequest request,
 			HttpServletResponse response, StudentVo studentVo) {
 
-		Student student = new Student();
-		student.setUserName(studentVo.getUserName());
-		student.setPassword(studentVo.getPassword());
-		student.setFirstName(studentVo.getFirstName());
-		student.setLastName(studentVo.getLastName());
-		student.setAddress(studentVo.getAddress());
-		student.setCity(studentVo.getCity());
-		student.setAge(Integer.valueOf(studentVo.getAge()));
-		student.setRollNo(Integer.valueOf(studentVo.getRollNo()));
+		Student student = Util.createStudentFromStudentVoForSignUp(studentVo);
 		if (studentVo.getDepartment() != "NONE") {
 			Department dept = fetchDepartment(studentVo);
 			student.setDepartment(dept);
@@ -47,7 +38,6 @@ public class StudentController extends MultiActionController {
 		studentBusinessService.saveStudent(student);
 
 		LoginUserVo loginUserVo = new LoginUserVo();
-
 		ModelAndView loginView = new ModelAndView("login", "loginUserVo",
 				loginUserVo);
 		return loginView;
@@ -72,12 +62,12 @@ public class StudentController extends MultiActionController {
 		return updatestudentView;
 	}
 
-
 	public ModelAndView updateStudent(HttpServletRequest request,
 			HttpServletResponse response, StudentVo studentVo) {
 
 		Department department = fetchDepartment(studentVo);
-		Student student = Util.createStudentFromStudentVo(studentVo, department);
+		Student student = Util
+				.createStudentFromStudentVo(studentVo, department);
 		studentBusinessService.updateStudent(student);
 
 		ModelAndView updatestudentView = new ModelAndView("updatestudent",
@@ -85,7 +75,6 @@ public class StudentController extends MultiActionController {
 		updatestudentView.addObject("message", "Student successfully updated");
 		return updatestudentView;
 	}
-
 
 	public ModelAndView deleteStudent(HttpServletRequest request,
 			HttpServletResponse response, StudentVo studentVo) {
@@ -97,27 +86,30 @@ public class StudentController extends MultiActionController {
 		studentreportView.addObject("message", "Student deleted successfully");
 		return studentreportView;
 	}
-	
+
 	private Department fetchDepartment(StudentVo studentVo) {
-		return departmentBusinessService
-				.fetchDepartment(studentVo.getDepartment());
+		return departmentBusinessService.fetchDepartment(studentVo
+				.getDepartment());
+	}
+	
+	public void userNameExists(HttpServletRequest request, HttpServletResponse response) throws IOException{
+		String userName = request.getParameter("userName");
+		String message="";
+		if(studentBusinessService.userNameExists(userName)){
+			message = "Username already exists.";
+		}
+		PrintWriter out = response.getWriter();
+		out.write(message);
 	}
 
-
-	public Validator getStudentValidator() {
-		return studentValidator;
-	}
-
-	public void setStudentValidator(Validator studentValidator) {
-		this.studentValidator = studentValidator;
-	}
-
-	public BindingResult getErrors() {
-		return errors;
-	}
-
-	public void setErrors(BindingResult errors) {
-		this.errors = errors;
+	public void rollNumberExists(HttpServletRequest request, HttpServletResponse response) throws IOException{
+		String rollNumber = request.getParameter("rollNo");
+		String message="";
+		if(studentBusinessService.rollNumberExists(Integer.valueOf(rollNumber))){
+			message = "Roll number already exists.";
+		}
+		PrintWriter out = response.getWriter();
+		out.write(message);
 	}
 
 	public StudentBusinessService getStudentBusinessService() {
@@ -133,22 +125,8 @@ public class StudentController extends MultiActionController {
 		return departmentBusinessService;
 	}
 
-
-
 	public void setDepartmentBusinessService(
 			DepartmentBusinessService departmentBusinessService) {
 		this.departmentBusinessService = departmentBusinessService;
 	}
-
-
-
-	@Override
-	protected void bind(HttpServletRequest request, Object command)
-			throws Exception {
-		ServletRequestDataBinder binder = null;
-		binder = createBinder(request, command);
-		binder.bind(request);
-		errors = binder.getBindingResult();
-	}
-
 }

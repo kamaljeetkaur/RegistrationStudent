@@ -1,5 +1,7 @@
 package com.rd.controller;
 
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -13,14 +15,11 @@ import com.rd.businessservice.StudentBusinessService;
 import com.rd.entity.Department;
 import com.rd.vo.DepartmentVo;
 import com.rd.vo.LoginUserVo;
-import com.rd.vo.StudentVo;
 
 public class DepartmentController extends MultiActionController{
 	
 	private StudentBusinessService studentBusinessService;
 	private DepartmentBusinessService departmentBusinessService;
-	
-	
 	
 	public ModelAndView displayUpdateDepartment(HttpServletRequest request,
 			HttpServletResponse response, DepartmentVo departmentVo) {
@@ -41,7 +40,6 @@ public class DepartmentController extends MultiActionController{
 	
 	public ModelAndView createDepartment(HttpServletRequest request,
 			HttpServletResponse response, DepartmentVo departmentVo) {
-		LoginUserVo loginUserVo = new LoginUserVo();
 		ModelAndView deptView = new ModelAndView("department", "departmentVo",
 				departmentVo);
 		if (departmentVo.getName() == "") {
@@ -101,12 +99,16 @@ public class DepartmentController extends MultiActionController{
 		return deptView;
 	}
 	
-
-	private Department fetchDepartment(StudentVo studentVo) {
-		return departmentBusinessService
-				.fetchDepartment(studentVo.getDepartment());
+	public void deptNameExists(HttpServletRequest request, HttpServletResponse response) throws IOException{
+		String deptName = request.getParameter("name");
+		String message="";
+		if(departmentBusinessService.deptNameExists(deptName)){
+			message = "Department already exists.";
+		}
+		PrintWriter out = response.getWriter();
+		out.write(message);
 	}
-
+	
 	public StudentBusinessService getStudentBusinessService() {
 		return studentBusinessService;
 	}
@@ -119,8 +121,6 @@ public class DepartmentController extends MultiActionController{
 	public DepartmentBusinessService getDepartmentBusinessService() {
 		return departmentBusinessService;
 	}
-
-
 
 	public void setDepartmentBusinessService(
 			DepartmentBusinessService departmentBusinessService) {

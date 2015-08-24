@@ -22,5 +22,11 @@ public interface StudentDao {
 	public List<Student> fetchStudentsOfDept(Integer deptId);
 
 	public void updateDepartmentInStudent(Integer deptId);
+	
+	public Boolean userNameExists(String userName);
+	
+	public Boolean rollNumberExists(Integer rollNumber);
+	
+	
 
 }

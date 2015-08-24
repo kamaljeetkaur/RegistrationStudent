@@ -54,7 +54,18 @@ public class Util {
 		return student;
 	}
 	
-	
+	public static Student createStudentFromStudentVoForSignUp(StudentVo studentVo) {
+		Student student = new Student();
+		student.setUserName(studentVo.getUserName());
+		student.setPassword(studentVo.getPassword());
+		student.setFirstName(studentVo.getFirstName());
+		student.setLastName(studentVo.getLastName());
+		student.setAddress(studentVo.getAddress());
+		student.setCity(studentVo.getCity());
+		student.setAge(Integer.valueOf(studentVo.getAge()));
+		student.setRollNo(Integer.valueOf(studentVo.getRollNo()));
+		return student;
+	}
 
 
 

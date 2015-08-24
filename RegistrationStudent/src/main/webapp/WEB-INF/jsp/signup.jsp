@@ -8,15 +8,49 @@
 <html>
 <head>
 <h2>SIGN UP PAGE</h2>
+<script  type="text/javascript" src="js/jquery-2.1.4.js"></script>
+<script type="text/javascript">
+function userNameExists() {
+	 $.ajax({
+		type:"post",
+		url:"student.html?method=userNameExists",
+		cache:false,
+		data:'userName=' + $("#userName").val(),
+		success:function(response){
+			$("#userNameExistMessage").text(response);
+		},
+	    error:function(){      
+		   alert('Error while request..');
+	    }
+	}); 
+}
+
+function rollNumberExists() {
+	$.ajax({
+		type:"post",
+		url:"student.html?method=rollNumberExists",
+		cache:false,
+		data:'rollNo=' + $("#rollNo").val(),
+		success:function(response){
+				$("#rollNoExistMessage").text(response);
+		},
+		error:function(){      
+		   alert('Error while request..');
+	    }
+	});
+}
+
+</script>
 </head>
 <body>
 	<form:form name="signupform" method="post"
 		action="student.html?method=doSignUp" commandName="studentVo">
-		<table cellpadding="1" cellspacing="1" align="center" border="1">
+		<table cellpadding="1" cellspacing="1" align="center">
 			<tr>
 				<td><label>UserName:</label></td>
-				<td><form:input path="userName" /></td>
+				<td><form:input path="userName" onblur="userNameExists();"/></td>
 				<td><form:errors path="userName"/></td>
+				<td><label id="userNameExistMessage"/></td>
 			</tr>
 
 			<tr>
@@ -26,7 +60,8 @@
 			</tr>
 			<tr>
 				<td><label>Roll Number</label></td>
-				<td><form:input path="rollNo" /></td>
+				<td><form:input path="rollNo"  onblur="rollNumberExists();"/></td>
+				<td><label id="rollNoExistMessage"/></td>
 			</tr>
 			<tr>
 				<td><label>FirstName</label></td>

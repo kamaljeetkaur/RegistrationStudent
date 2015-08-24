@@ -1,9 +1,12 @@
 package com.rd.dataservice;
 
+import java.sql.SQLException;
 import java.util.List;
 
+import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 
 import com.rd.entity.Department;
@@ -16,15 +19,17 @@ public class StudentDaoImpl extends HibUtil implements StudentDao {
 		getHibernateTemplate().save(student);
 	}
 
+	@SuppressWarnings("unchecked")
 	public boolean studentExist(Student student) {
+		String userName = student.getUserName();
+		String password = student.getPassword();
+		String parameters[] = { userName, password };
 		StringBuilder str = new StringBuilder(
-				"select st from Student st where st.userName=:userName and st.password=:password");
-		Session session = getNewSession();
-		Query query = session.createQuery(str.toString());
-		query.setString("userName", student.getUserName());
-		query.setString("password", student.getPassword());
-		List<Student> listStudent = query.list();
-		closeSession(session);
+				"select st from Student st where st.userName=? and st.password=?");
+		List<Student> listStudent = getHibernateTemplate().find(str.toString(),
+				parameters);
+		getHibernateTemplate().initialize(listStudent.get(0).getDepartment());
+
 		if (listStudent.isEmpty()) {
 			return false;
 		} else {
@@ -32,14 +37,12 @@ public class StudentDaoImpl extends HibUtil implements StudentDao {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	public List<Student> fetchAllStudents() {
 		StringBuilder str = new StringBuilder(
-				"select student from Student student");
-		Session session = getNewSession();
-		Query query = session.createQuery(str.toString());
-		List<Student> studentList = query.list();
-		closeSession(session);
-		return studentList;
+				"select student from Student student join fetch   student.department");
+		List<Student> listStudent = getHibernateTemplate().find(str.toString());
+		return listStudent;
 	}
 
 	public void updateStudent(Student student) {
@@ -52,34 +55,56 @@ public class StudentDaoImpl extends HibUtil implements StudentDao {
 
 	public Student fetchStudentWithId(Integer id) {
 		StringBuilder str = new StringBuilder(
-				"select student from Student student where id=:id");
-		Session session = getNewSession();
-		Query query = session.createQuery(str.toString());
-		query.setInteger("id", id);
-		List<Student> studentlist = query.list();
-		closeSession(session);
-		return studentlist.get(0);
+				"select student from Student student where id=?");
+		return (Student) getHibernateTemplate().find(str.toString(), id).get(0);
 	}
 
+	@SuppressWarnings("unchecked")
 	public List<Student> fetchStudentsOfDept(Integer deptId) {
 		StringBuilder str = new StringBuilder(
-				"select student from Student student where id =:id");
-		Session session = getNewSession();
-		Query query = session.createQuery(str.toString());
-		query.setInteger("id", deptId);
-		List<Student> studentlist = query.list();
-		closeSession(session);
-		return studentlist;
+				"select student from Student student where id =?");
+		return getHibernateTemplate().find(str.toString(), deptId);
 	}
 
-	public void updateDepartmentInStudent(Integer deptId) {
+	public void updateDepartmentInStudent(final Integer deptId) {
+		final StringBuilder str = new StringBuilder(
+				"update Student st set st.department=null where st.department.id =?");
+		getHibernateTemplate().execute(new HibernateCallback() {
+			public Object doInHibernate(Session session)
+					throws HibernateException, SQLException {
+				Query query = session.createQuery(str.toString());
+				query.setInteger("id", deptId);
+				int i = query.executeUpdate();
+				return null;
+			}
+		});
+
+	}
+
+	@SuppressWarnings("unchecked")
+	public Boolean userNameExists(String userName) {
 		StringBuilder str = new StringBuilder(
-				"update Student st set st.department=null where st.department.id =:id");
-		Session session = getNewSession();
-		Query query = session.createQuery(str.toString());
-		query.setInteger("id", deptId);
-		int i = query.executeUpdate();
-		closeSession(session);
+				"select st from Student st where st.userName=?");
+		List<Student> listStudent = (List<Student>) getHibernateTemplate()
+				.find(str.toString(), userName);
+		if (! listStudent.isEmpty()) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	public Boolean rollNumberExists(Integer rollNumber) {
+		StringBuilder str = new StringBuilder(
+				"select st from Student st where st.rollNo=?");
+		@SuppressWarnings("unchecked")
+		List<Student> listStudent = (List<Student>) getHibernateTemplate()
+				.find(str.toString(), rollNumber);
+		if (! listStudent.isEmpty()) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 }

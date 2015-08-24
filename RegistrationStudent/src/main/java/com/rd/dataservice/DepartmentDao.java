@@ -17,5 +17,7 @@ public interface DepartmentDao {
 	public void updateDepartment(Department dept);
 
 	public void deleteDepartment(Department dept);
+	
+	public boolean deptNameExists(String deptName);
 
 }
