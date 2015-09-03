@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<dataset>
+
+	<department dept_id='1' dept_name='java' />
+
+	<department dept_id='2' dept_name='linux' />
+
+	<student stud_id='1' username='kamal' password='kamal' rollno='1'
+		firstname='kamal' lastname='kaur' address='asr' city='del' age='23'
+		dept_id='1' />
+
+	<student stud_id='2' username='lotus' password='12345' rollno='1'
+		firstname='lotus' lastname='lotus' address='asr' city='del' age='23'
+		dept_id='2' />
+
+	<student stud_id='3' username='jkt' password='123456' rollno='1'
+		firstname='jkt' lastname='jkt' address='asr' city='del' age='23'
+		dept_id='1' />
+</dataset>

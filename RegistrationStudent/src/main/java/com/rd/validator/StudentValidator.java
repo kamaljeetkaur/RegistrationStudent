@@ -20,8 +20,6 @@ public class StudentValidator implements Validator{
 		System.out.println("reached validator");
 		ValidationUtils.rejectIfEmpty(errors, "userName", "", "User Name is required");
 		ValidationUtils.rejectIfEmpty(errors, "password", "", "password is required");
-		
-		
 	}
 
 }

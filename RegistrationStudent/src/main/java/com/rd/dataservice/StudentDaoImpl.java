@@ -7,14 +7,14 @@ import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.springframework.orm.hibernate3.HibernateCallback;
-import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
+import org.springframework.orm.hibernate3.HibernateTemplate;
 
-import com.rd.entity.Department;
 import com.rd.entity.Student;
 import com.rd.utility.HibUtil;
 
 public class StudentDaoImpl extends HibUtil implements StudentDao {
-
+	HibernateTemplate hibernateTemplate;
+	
 	public void saveStudent(Student student) {
 		getHibernateTemplate().save(student);
 	}

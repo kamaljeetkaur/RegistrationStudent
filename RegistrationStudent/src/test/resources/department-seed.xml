@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+	<DEPARTMENT dept_id='1' dept_name='java' />
+
+	<DEPARTMENT dept_id='2' dept_name='linux' />
+</dataset>
